@@ -66,19 +66,51 @@ Dataset yang digunakan berisi **10.000 entri** dan **8 kolom**. Berikut adalah k
 
 Pada bagian ini, berikut adalah tahapan **data preparation** yang dilakukan:
 
-* **Menghapus Kolom yang Tidak Diperlukan**: Kolom **`Unnamed: 0`** dan **`URL`** dihapus karena tidak relevan untuk analisis.
-* **Mengonversi `Num_Ratings` ke Tipe Numerik**: Koma dalam **`Num_Ratings`** dihapus untuk memastikan angka bisa dihitung dengan benar, kemudian mengonversi kolom tersebut menjadi **`float64`**.
-* **Mengisi Missing Value di Kolom `Description`**: Nilai kosong di kolom **`Description`** diisi dengan string **"No Description"** untuk menghindari missing values yang bisa mengganggu model.
-* **Mengonversi `Genres` Menjadi List**: Kolom **`Genres`** yang berbentuk string diubah menjadi list agar lebih mudah diproses dan digunakan dalam model.
-* **Membersihkan dan Menggabungkan Kolom**: Kolom **`Genres`**, **`Description`**, **`Author`**, dan **`Book`** digabungkan menjadi satu kolom **`combined`** yang digunakan sebagai input untuk model rekomendasi berbasis konten.
+* **Menghapus Kolom yang Tidak Diperlukan**: Kolom **`Unnamed: 0`** dan **`URL`** dihapus karena tidak relevan untuk analisis lebih lanjut.
+* **Menghapus Koma pada Kolom `Num_Ratings`**: Koma yang ada dalam kolom **`Num_Ratings`** dihapus untuk memastikan angka bisa dihitung dengan benar.
+* **Mengonversi `Num_Ratings` ke Tipe Numerik**: Kolom **`Num_Ratings`** yang awalnya bertipe **object** diubah menjadi **`float64`** agar dapat diproses lebih lanjut dalam perhitungan numerik.
+* **Mengisi Missing Value di Kolom `Description`**: Nilai kosong pada kolom **`Description`** diisi dengan string **"No Description"** untuk menghindari missing values yang dapat mengganggu pemrosesan data lebih lanjut.
+* **Mengonversi `Genres` Menjadi List:**
+
+  Kolom **`Genres`** awalnya berbentuk string yang menyimpan beberapa genre dalam format seperti `"[Genre1, Genre2, Genre3]"`. Untuk memudahkan pemrosesan dan perhitungan kesamaan antar genre, kolom **`Genres`** diubah menjadi list Python.
+
+  * **Langkah 1**: Menghapus tanda kurung siku (`[]`) dan tanda kutip (`'`) dari string genre menggunakan fungsi **`strip("[]").replace("'", "")`**.
+  * **Langkah 2**: Setelah itu, elemen genre dipisahkan dengan koma (`,`) menggunakan metode **`split(',')`**. Hasilnya adalah sebuah list Python, seperti `['Classics', 'Fiction', 'Historical']`, yang lebih mudah diproses dan dianalisis dalam model.
+
+  **Contoh Kode**:
+
+  ```python
+  df_cleaned['Genres'] = df_cleaned['Genres'].apply(lambda x: x.strip("[]").replace("'", "").split(',') if isinstance(x, str) else x)
+  ```
+
+* **Membersihkan Genre dan Menggabungkan Kolom:**
+
+  Setelah kolom **`Genres`** berhasil diubah menjadi list, langkah selanjutnya adalah mengonversi list tersebut kembali menjadi string tunggal yang dipisahkan oleh spasi. Hal ini dilakukan untuk memastikan bahwa format data **`Genres`** menjadi konsisten dan mudah digunakan dalam model analisis berbasis teks.
+
+  * **Langkah 1**: List genre, yang sebelumnya berbentuk `['Classics', 'Fiction', 'Historical']`, diubah menjadi string yang dipisahkan oleh spasi, seperti `'Classics Fiction Historical'`, dengan menggunakan metode **`' '.join(x)`**.
+
+  * **Langkah 2**: Setelah genre menjadi string, kolom **`Genres`**, **`Description`**, **`Author`**, dan **`Book`** digabungkan menjadi satu kolom **`combined`**. Kolom ini berfungsi sebagai input utama untuk model rekomendasi berbasis konten, di mana semua informasi teks (genre, deskripsi, penulis, dan judul buku) digabungkan menjadi satu kolom untuk dianalisis bersama-sama.
+
+  **Contoh Kode**:
+
+  ```python
+  df_cleaned['Genres'] = df_cleaned['Genres'].apply(lambda x: ' '.join(x) if isinstance(x, list) else x)
+  ```
+
+  Kemudian, kolom-kolom tersebut digabungkan menjadi satu kolom **`combined`**:
+
+  ```python
+  df_cleaned['combined'] = df_cleaned['Genres'] + ' ' + df_cleaned['Description'] + ' ' + df_cleaned['Author'] + ' ' + df_cleaned['Book']
+  ```
 
 **Alasan Data Preparation:**
 
-* **Menghapus kolom yang tidak relevan** membantu mengurangi dimensi dataset dan mempercepat pemrosesan data.
-* **Mengonversi `Num_Ratings`** ke tipe numerik memungkinkan kita melakukan perhitungan, seperti pengurutan berdasarkan jumlah rating.
-* **Menangani nilai kosong di `Description`** penting agar model tidak terkendala dengan missing values.
-* **Mengonversi `Genres` menjadi list** memastikan kolom tersebut dapat digunakan untuk menghitung kemiripan antar buku dengan akurat.
-* **Menggabungkan kolom `Genres`, `Description`, `Author`, dan `Book`** menjadi satu kolom **`combined`** memungkinkan model menggunakan informasi komprehensif untuk menghitung kemiripan antar buku.
+* **Menghapus kolom yang tidak relevan** seperti **`Unnamed: 0`** dan **`URL`** membantu mengurangi dimensi dataset, mempermudah pemrosesan data, dan fokus pada informasi yang relevan.
+* **Menghapus koma pada kolom `Num_Ratings`** memungkinkan data dikonversi dengan benar menjadi tipe numerik (**`float64`**), yang penting untuk analisis lebih lanjut dan perhitungan seperti pengurutan berdasarkan rating.
+* **Mengisi missing value di kolom `Description`** dengan string **"No Description"** penting untuk memastikan tidak ada nilai kosong yang mengganggu pemrosesan atau model rekomendasi.
+* **Mengonversi `Genres` menjadi list** memudahkan pemrosesan dan memungkinkan kita untuk melakukan perhitungan kesamaan genre antar buku dengan lebih tepat dan terstruktur.
+* **Membersihkan** `Genres` dengan mengonversi list menjadi string memungkinkan konsistensi data, sehingga lebih mudah diproses lebih lanjut oleh model. Menggunakan format yang konsisten penting agar data dapat diterima oleh algoritma analisis berbasis teks.
+* **Menggabungkan kolom `Genres`, `Description`, `Author`, dan `Book`** menjadi satu kolom **`combined`** memberikan model lebih banyak konteks untuk menghitung kemiripan antar buku berdasarkan kesamaan genre, deskripsi, penulis, dan judul buku.
 
 ---
 
