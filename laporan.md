@@ -47,7 +47,15 @@ Dataset yang digunakan berisi informasi mengenai buku-buku dengan fitur-fitur be
 * **Num\_Ratings**: Jumlah ulasan buku.
 
 **Jumlah Data dan Kondisi Data:**
-Dataset yang digunakan berisi **10.000 entri** buku, dengan beberapa kolom yang berisi teks seperti **Description** dan **Genres**. Data ini mencakup berbagai genre buku, dari fiksi hingga non-fiksi, dengan rating dari pengguna yang dapat digunakan untuk menentukan relevansi.
+Dataset yang digunakan berisi **10.000 entri** dan **8 kolom**. Berikut adalah kondisi spesifik dari dataset:
+
+1. **Jumlah Missing Value**: Terdapat **77 missing values** pada kolom **'Description'**.
+2. **Jumlah Duplikat**: Tidak ditemukan data duplikat (**0 duplikat**).
+3. **Kolom yang Perlu Diperhatikan**:
+  * **Description**: Kolom ini harus ditangani dengan mengisi missing value dengan value **No Description** pada data yang kosong.
+  * **Num\_Ratings**: Kolom ini memiliki tipe data **object** (seharusnya **float64**) karena mengandung koma yang perlu dihapus dan dikonversi menjadi tipe numerik.
+  * **Genres**: Kolom ini berisi string dengan beberapa genre yang digabungkan dalam format yang memerlukan pengolahan untuk mengubahnya menjadi list.
+
 
 **Sumber Dataset:**
 [Best Books 10k Multi Genre Data - Kaggle](https://www.kaggle.com/datasets/ishikajohari/best-books-10k-multi-genre-data)
