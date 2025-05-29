@@ -64,7 +64,8 @@ Dataset yang digunakan berisi **10.000 entri** dan **8 kolom**. Berikut adalah k
 
 ## Data Preparation
 
-Pada bagian ini, berikut adalah tahapan **data preparation** yang dilakukan:
+### Preprocessing Data
+Pada bagian ini, berikut adalah tahapan **Preprocessing Data** yang dilakukan:
 
 * **Menghapus Kolom yang Tidak Diperlukan**: Kolom **`Unnamed: 0`** dan **`URL`** dihapus karena tidak relevan untuk analisis lebih lanjut.
 * **Menghapus Koma pada Kolom `Num_Ratings`**: Koma yang ada dalam kolom **`Num_Ratings`** dihapus untuk memastikan angka bisa dihitung dengan benar.
@@ -103,7 +104,7 @@ Pada bagian ini, berikut adalah tahapan **data preparation** yang dilakukan:
   df_cleaned['combined'] = df_cleaned['Genres'] + ' ' + df_cleaned['Description'] + ' ' + df_cleaned['Author'] + ' ' + df_cleaned['Book']
   ```
 
-**Alasan Data Preparation:**
+**Alasan Preprocessing Data:**
 
 * **Menghapus kolom yang tidak relevan** seperti **`Unnamed: 0`** dan **`URL`** membantu mengurangi dimensi dataset, mempermudah pemrosesan data, dan fokus pada informasi yang relevan.
 * **Menghapus koma pada kolom `Num_Ratings`** memungkinkan data dikonversi dengan benar menjadi tipe numerik (**`float64`**), yang penting untuk analisis lebih lanjut dan perhitungan seperti pengurutan berdasarkan rating.
@@ -112,13 +113,47 @@ Pada bagian ini, berikut adalah tahapan **data preparation** yang dilakukan:
 * **Membersihkan** `Genres` dengan mengonversi list menjadi string memungkinkan konsistensi data, sehingga lebih mudah diproses lebih lanjut oleh model. Menggunakan format yang konsisten penting agar data dapat diterima oleh algoritma analisis berbasis teks.
 * **Menggabungkan kolom `Genres`, `Description`, `Author`, dan `Book`** menjadi satu kolom **`combined`** memberikan model lebih banyak konteks untuk menghitung kemiripan antar buku berdasarkan kesamaan genre, deskripsi, penulis, dan judul buku.
 
+### Feature Enggineering
+
+Untuk meningkatkan performa sistem rekomendasi, teknik **feature engineering** digunakan untuk mengubah teks menjadi representasi numerik yang bisa digunakan dalam perhitungan kemiripan. Dua teknik yang digunakan adalah **TfidfVectorizer** dan **CountVectorizer**, yang mengubah teks dalam kolom **`combined`** menjadi representasi vektor.
+
+* **TfidfVectorizer**:
+  **TfidfVectorizer** digunakan untuk mengonversi teks dari kolom **`combined`** menjadi representasi numerik dengan memperhitungkan **frekuensi** kata dalam dokumen dan **invers frekuensi** kata tersebut dalam seluruh koleksi dokumen. Ini memberikan bobot lebih pada kata-kata yang jarang, tetapi relevan dalam konteks dokumen tersebut.
+
+  **Contoh Kode**:
+
+  ```python
+  from sklearn.feature_extraction.text import TfidfVectorizer
+
+  tfidf = TfidfVectorizer(stop_words='english')
+  tfidf_matrix = tfidf.fit_transform(df_cleaned['combined'])
+  ```
+
+  **Alasan Penggunaan**:
+
+  * **TfidfVectorizer** membantu dalam menangkap pentingnya kata-kata tertentu dalam deskripsi buku dan genre, sehingga membantu model memahami konteks teks dengan lebih baik.
+
+* **CountVectorizer**:
+  **CountVectorizer** digunakan untuk mengonversi teks menjadi representasi **biner** atau **frekuensi kata**. Dalam hal ini, **CountVectorizer** menghitung frekuensi kemunculan kata dalam teks dan menghasilkan vektor yang merepresentasikan setiap dokumen sebagai vektor fitur biner. Teknik ini lebih sederhana dibandingkan dengan **TF-IDF**, tetapi sangat efektif untuk menghitung kesamaan berdasarkan kata yang muncul dalam teks.
+
+  **Contoh Kode**:
+
+  ```python
+  from sklearn.feature_extraction.text import CountVectorizer
+
+  count_vectorizer = CountVectorizer(stop_words='english')
+  count_matrix = count_vectorizer.fit_transform(df_cleaned['combined'])
+  ```
+
+  **Alasan Penggunaan**:
+
+  * **CountVectorizer** digunakan untuk menangkap kemiripan kata-kata dalam teks, terutama untuk mengukur kesamaan berdasarkan elemen spesifik dalam deskripsi dan genre buku.
+
 ---
 
 ## Modeling
 
 ### 1. **Cosine Similarity**:
-
-* **TF-IDF Vectorization** digunakan untuk mengonversi teks dari kolom **`combined`** menjadi representasi vektor numerik.
 
 * **Cosine Similarity** dihitung untuk mengukur kemiripan antar buku berdasarkan teks yang telah terkonversi.
 
@@ -148,8 +183,6 @@ Buku yang direkomendasikan:
 
 
 ### 2. **Jaccard Distance**:
-
-* **CountVectorizer** digunakan untuk mengonversi teks menjadi representasi biner.
 
 * **Jaccard Distance** dihitung antara buku dan query untuk mengukur kesamaan antar buku berdasarkan elemen spesifik dalam deskripsi dan genre.
 
