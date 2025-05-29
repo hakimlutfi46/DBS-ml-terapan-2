@@ -47,10 +47,7 @@ df_cleaned['combined'] = df_cleaned['Genres'] + ' ' + df_cleaned['Description'] 
 # Melihat data yang telah digabungkan
 print(df_cleaned[['Book', 'combined']].head())
 
-
-# Modeling
-
-# Cosine Similarity
+# Feature Engineering
 
 # Menggunakan TfidfVectorizer untuk menghitung representasi TF-IDF dari teks yang telah digabungkan
 tfidf = TfidfVectorizer(stop_words='english')
@@ -60,6 +57,15 @@ tfidf_matrix = tfidf.fit_transform(df_cleaned['combined'])
 
 # Menghitung cosine similarity antar buku menggunakan TF-IDF matrix
 cosine_sim = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+# Menggunakan CountVectorizer untuk menghitung representasi biner dari teks (deskripsi buku)
+count_vectorizer = CountVectorizer(stop_words='english')
+count_matrix = count_vectorizer.fit_transform(df_cleaned['combined'])
+
+
+# Modeling
+
+# Cosine Similarity
 
 # Fungsi untuk rekomendasi berdasarkan Cosine Similarity
 def recommend_books_cosine(query, cosine_sim=cosine_sim, top_n=5):
@@ -91,10 +97,6 @@ def jaccard_distance(vec1, vec2):
     intersection = np.sum(np.minimum(vec1, vec2))  # Jumlah kata yang ada di kedua buku
     union = np.sum(np.maximum(vec1, vec2))  # Jumlah kata yang ada di salah satu buku
     return 1 - intersection / union  # Jaccard Distance
-
-# Menggunakan CountVectorizer untuk menghitung representasi biner dari teks (deskripsi buku)
-count_vectorizer = CountVectorizer(stop_words='english')
-count_matrix = count_vectorizer.fit_transform(df_cleaned['combined'])
 
 # Fungsi untuk rekomendasi berdasarkan Jaccard Distance
 def recommend_books_jaccard(query, count_matrix=count_matrix, top_n=5):
