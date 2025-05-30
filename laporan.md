@@ -39,12 +39,14 @@ Untuk mencapai tujuan tersebut, dua pendekatan sistem rekomendasi digunakan:
 
 Dataset yang digunakan berisi informasi mengenai buku-buku dengan fitur-fitur berikut:
 
+* **Unnamed: 0**: Kolom ini berisi indeks atau nomor urut.
 * **Book**: Nama buku.
 * **Author**: Nama penulis buku.
 * **Description**: Deskripsi atau sinopsis buku.
 * **Genres**: Genre atau kategori buku.
 * **Avg\_Rating**: Rata-rata rating buku.
 * **Num\_Ratings**: Jumlah ulasan buku.
+* **URL**: Kolom yang berisi URL terkait informasi buku.
 
 **Jumlah Data dan Kondisi Data:**
 Dataset yang digunakan berisi **10.000 entri** dan **8 kolom**. Berikut adalah kondisi spesifik dari dataset:
