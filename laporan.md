@@ -175,10 +175,10 @@ Rekomendasi yang diberikan berdasarkan **Cosine Similarity** menunjukkan buku ya
 
 Buku yang direkomendasikan:
 
-* **Virtual Light** oleh William Gibson
-* **Forever Peace** oleh Joe Haldeman
+* **Virtual Light (Bridge, #1)** oleh William Gibson
+* **Forever Peace (The Forever War, #3)** oleh Joe Haldeman
 * **Dear and Glorious Physician** oleh Taylor Caldwell
-* **The Enigma of Arrival** oleh V.S. Naipaul
+* **The Enigma of Arrival: A Novel in Five Sections** oleh V.S. Naipaul
 * **Collected Fiction** oleh Ruskin Bond
 
 **Rating dan Popularitas**: Buku yang lebih banyak di-review (seperti **Virtual Light**) lebih tinggi dalam rekomendasi karena pengurutan berdasarkan **`Num_Ratings`**.
@@ -204,7 +204,7 @@ Rekomendasi yang diberikan berdasarkan **Jaccard Distance** menunjukkan buku yan
 
 Buku yang direkomendasikan:
 
-* **The Shipping News** oleh E. Annie Proulx
+* **The Shipping News by E. Annie Proulx** oleh BookRags
 * **SHADOW PANTHEON** oleh Eric Nierstedt
 * **A Taste for Green Tangerines** oleh Barbara Bisco
 * **Making Amends** oleh D.J. Callaghan
